@@ -319,7 +319,7 @@ page("results.html", "Results: before and after", f"""
 <div class="box"><b>Caveats.</b> The questions are mine; a keyword matcher cannot see subtle errors (see test T3); the latency numbers are small samples and depend on the external model's load that day. The hourly 5-question test on AWS is the live health measure of the deployed system.</div>
 <h2>Cost</h2>
 <p>All spending is covered by the account's free-plan credits. Controls: a zero-spend AWS Budgets alert created first, tags on every resource, the smallest viable instance, 14-day log retention and a shut-down plan on the <a href="declaration.html">last page</a>. Idle cost of this design is mostly the instance, its public IPv4 address and CloudFront requests.</p>
-<div class="cols">{fig("01_budget_alert_created.png","E-16")}{fig("04_signed_in_as_iam_user_credits.png","E-16")}</div>
+<div class="cols">{fig("01_budget_alert_created.png","E-16")}{fig("04_signed_in_as_iam_user_credits.png","E-16")}{fig("43_cost_credits_after.png","E-16")}</div>
 """, "WS-G - Results", "Before and after, measured the same way over the same period, with the cost as one of the numbers.")
 
 # =========================================================================================== 9 NEXT

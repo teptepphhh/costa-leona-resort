@@ -17,6 +17,6 @@
   "pii_result": "2026-11-26 04:56 UTC: scanned 5 logged questions (the log kept after the incident trim), 0 possible personal-data hits.",
   "request_log_img": "42_cloudwatch_request_log.png",
   "cost_before": "USD 117.40 free-plan credits remaining (2026-11-26, console home, before deployment)",
-  "cost_after": "",
+  "cost_after": "USD 117.24 credits remaining (later on 2026-11-26, after deployment, incident and restore tests); about USD 0.16 used so far. The console refreshes estimates about every 24 hours, so the final figure may be higher.",
   "declaration_date": ""
 }

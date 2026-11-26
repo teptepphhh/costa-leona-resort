@@ -420,6 +420,7 @@ table(["Measure", "Before", "After", "Period / how measured"], [
 fig("chart_quality.png", "E-04", 5.8, "Questions passed by category: generic model versus Leona (same 30 questions, same model, same day).")
 rich("**Caveats.** The questions are mine; a keyword matcher cannot see subtle errors (test T3); latency numbers are small samples and depend on the external model's load that day. The hourly 5-question test on AWS is the live health measure.")
 rich("**Cost.** All spending is covered by the account's free-plan credits. Controls: a zero-spend budget alert created first, tags on every resource, the smallest viable instance, 14-day log retention and a shut-down plan (section 11). The disk-full incident's synthetic log flood was also shipped to CloudWatch Logs by the agent, which adds ingestion cost; the final figure is recorded above once billing data is available.")
+fig("43_cost_credits_after.png", "E-16", 6.2)
 
 # ================================================================================ 9 next
 h("9. What I would do next")
@@ -450,7 +451,7 @@ table(["ID", "What", "Where"], [
     ["E-13", "Secrets in Parameter Store", f("14_deploy_s3_ssm_secrets.png", "22_iam_mfa_ssm_params_cloudtrail.png")],
     ["E-14", "Two automations running with timestamps", f("18_automation_rules_scheduled.png", "41_automation_two_unattended_runs.png")],
     ["E-15", "Logs and commands from the fault investigation", f("29_incident_fault_started_disk_full.png", "33_incident_investigation_root_cause.png", "35_incident_fix_and_prevention.png")],
-    ["E-16", "Cost before and after", f("01_budget_alert_created.png", "04_signed_in_as_iam_user_credits.png") + " (after: section 8)"],
+    ["E-16", "Cost before and after", f("01_budget_alert_created.png", "04_signed_in_as_iam_user_credits.png", "43_cost_credits_after.png")],
     ["E-17", "Well-Architected review", "Section 5; " + f("20_cloudtrail_logging_guardduty_unavailable.png")],
     ["E-18", "AWS infrastructure design diagram", f("architecture.png")]], [0.6, 3.0, 2.9])
 
