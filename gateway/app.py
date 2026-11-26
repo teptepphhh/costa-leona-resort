@@ -48,7 +48,8 @@ os.makedirs(os.path.dirname(REQUEST_LOG), exist_ok=True)
 req_logger = logging.getLogger("leona.requests")
 req_logger.setLevel(logging.INFO)
 if not req_logger.handlers:
-    # NOTE: plain FileHandler on purpose (no rotation) - the incident/runbook documents the later fix.
+    # NOTE: no rotation in code. The first release had none at all and filled the disk (incident 2026-11-26);
+    # rotation is now done by logrotate (/etc/logrotate.d/leona, installed by infra/start.sh).
     req_logger.addHandler(logging.FileHandler(REQUEST_LOG))
     req_logger.addHandler(logging.StreamHandler())
 app = FastAPI(title="Leona gateway")

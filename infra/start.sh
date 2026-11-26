@@ -51,6 +51,26 @@ mkdir -p logs/gateway
 touch /var/log/leona-automation.log
 docker compose -f compose.yaml -f compose.aws.yaml up -d --build
 
+# Prevention for the disk-full incident of 2026-11-26: rotate the application request log (see runbook).
+cat > /etc/logrotate.d/leona <<'LR'
+/opt/leona/logs/gateway/requests.log {
+    hourly
+    maxsize 100M
+    rotate 3
+    compress
+    delaycompress
+    copytruncate
+    missingok
+    notifempty
+}
+LR
+mkdir -p /etc/systemd/system/logrotate.timer.d
+printf '[Timer]
+OnCalendar=
+OnCalendar=hourly
+' > /etc/systemd/system/logrotate.timer.d/hourly.conf
+systemctl daemon-reload && systemctl enable --now logrotate.timer
+
 cp infra/cwagent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
 echo "start.sh finished $(date -u +%FT%TZ)"
