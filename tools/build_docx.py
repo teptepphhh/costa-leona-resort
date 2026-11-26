@@ -425,6 +425,8 @@ fig("chart_quality.png", "E-04", 5.8, "Questions passed by category: generic mod
 rich("**Caveats.** The questions are mine; a keyword matcher cannot see subtle errors (test T3); latency numbers are small samples and depend on the external model's load that day. The hourly 5-question test on AWS is the live health measure.")
 rich("**Cost.** All spending is covered by the account's free-plan credits. Controls: a zero-spend budget alert created first, tags on every resource, the smallest viable instance, 14-day log retention and a shut-down plan (section 11). The disk-full incident's synthetic log flood was also shipped to CloudWatch Logs by the agent, which adds ingestion cost; the final figure is recorded above once billing data is available.")
 fig("43_cost_credits_after.png", "E-16", 6.2)
+rich("**A cost side effect of the incident.** Late on 26 November AWS sent a Free Tier alert: CloudWatch data processing had reached 5 GB of its 5 GB monthly allowance. This is consistent with the 11 GB synthetic log flood of the disk-full test being shipped to CloudWatch Logs by the agent. The flood is over and the normal log volume is a few kilobytes an hour, so no further growth is expected; any overage is covered by the account credits. Lesson for the runbook: a log-fill test also costs log-ingestion money, so cap or exclude the file during such a test.")
+fig("47_free_tier_cloudwatch_alert.png", "E-16", 6.2)
 
 # ================================================================================ 9 next
 h("9. What I would do next")

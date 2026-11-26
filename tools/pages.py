@@ -325,6 +325,8 @@ page("results.html", "Results: before and after", f"""
 <h2>Cost</h2>
 <p>All spending is covered by the account's free-plan credits. Controls: a zero-spend AWS Budgets alert created first, tags on every resource, the smallest viable instance, 14-day log retention and a shut-down plan on the <a href="declaration.html">last page</a>. Idle cost of this design is mostly the instance, its public IPv4 address and CloudFront requests.</p>
 <div class="cols">{fig("01_budget_alert_created.png","E-16")}{fig("04_signed_in_as_iam_user_credits.png","E-16")}{fig("43_cost_credits_after.png","E-16")}</div>
+<div class="box"><b>A cost side effect of the incident.</b> Late on 26 November AWS sent a Free Tier alert: CloudWatch data processing had reached 5 GB of its 5 GB monthly allowance. This is consistent with the 11 GB synthetic log flood of the disk-full test being shipped to CloudWatch Logs by the agent. The flood is over and the normal log volume is a few kilobytes an hour, so no further growth is expected; any overage is covered by the account credits. The lesson for the runbook: a log-fill test also costs log-ingestion money, so cap or exclude the file during such a test.</div>
+{fig("47_free_tier_cloudwatch_alert.png","E-16")}
 """, "WS-G - Results", "Before and after, measured the same way over the same period, with the cost as one of the numbers.")
 
 # =========================================================================================== 9 NEXT
