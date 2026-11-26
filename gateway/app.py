@@ -32,6 +32,7 @@ KEY_SSM_PARAM = os.getenv("GEMINI_KEY_SSM_PARAM", "")        # e.g. /costaleona/
 TOKEN_SSM_PARAM = os.getenv("GATEWAY_TOKEN_SSM_PARAM", "")   # e.g. /costaleona/gateway_token
 CW_METRICS = os.getenv("CW_METRICS", "0") == "1"
 REQUEST_LOG = os.getenv("REQUEST_LOG", "/var/log/leona/requests.log")
+BASELINE_MODE = os.getenv("BASELINE_MODE", "0") == "1"   # measurement only: plain model, no resort knowledge
 
 SYSTEM_PROMPT = """You are Leona, the virtual front-desk assistant of Costa Leona Resort, a fictional beach resort.
 Answer guests' questions ONLY from the RESORT KNOWLEDGE below. Be warm, brief and practical.
@@ -128,7 +129,8 @@ def to_gemini(messages):
 
 
 async def ask_gemini(messages):
-    system = SYSTEM_PROMPT + "\nRESORT KNOWLEDGE:\n" + load_knowledge()
+    system = ("You are a helpful assistant." if BASELINE_MODE
+              else SYSTEM_PROMPT + "\nRESORT KNOWLEDGE:\n" + load_knowledge())
     body = {"systemInstruction": {"parts": [{"text": system}]}, "contents": to_gemini(messages),
             "generationConfig": {"temperature": 0.2, "maxOutputTokens": 600}}
     models = [MODEL] + ([FALLBACK_MODEL] if FALLBACK_MODEL else [])
