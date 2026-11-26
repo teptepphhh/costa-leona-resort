@@ -3,7 +3,7 @@
 # request log (and rotated copies) for e-mail addresses, phone numbers, and long digit strings (card/ID numbers).
 # The resort's own fictional contact details are allowed because they are in the answers, not the questions.
 LOG=/opt/leona/logs/gateway
-docker exec costa-leona-gateway python - <<'PY'
+docker exec -i costa-leona-gateway python - <<'PY'
 import glob, json, re
 pats = {"email": r"[\w.+-]+@[\w-]+\.[\w.]+", "phone": r"(\+?63|0)9\d{9}|\+\d[\d\s-]{9,}", "long_digits": r"\b\d{9,19}\b"}
 total = hits = 0
