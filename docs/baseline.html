@@ -10,7 +10,7 @@
 <p class="lead2">Measured on 2026-11-26 before any deployment. Two things existed: an AWS account with one running server that belongs to <em>another</em> course project (not mine, untouched, excluded from every automation by tag), and the unmodified LibreChat that I ran on my laptop.</p>
 <table><tr><th>Area</th><th>Baseline</th></tr>
 <tr><td>AWS inventory (ap-southeast-1)</td><td>1 unrelated EC2 instance; no RDS; no S3 buckets; no Elastic IPs</td></tr>
-<tr><td>Account set-up</td><td>Root login with MFA; no IAM user for daily work; no budget alert; free-plan credits USD 117.40</td></tr>
+<tr><td>Account set-up</td><td>Root login with MFA; no IAM user for daily work; one zero-spend budget left over from another project (I added the SAM10 budget on day one); free-plan credits USD 117.40</td></tr>
 <tr><td>The AI system</td><td>Original LibreChat on a laptop, original name and logo, no resort knowledge: <b>9/30</b> test questions correct; asked "What time is check-in?" it answers generically ("usually 3:00 PM")</td></tr>
 <tr><td>Monitoring and alerts</td><td>None</td></tr><tr><td>Backups</td><td>None</td></tr>
 <tr><td>Secrets</td><td>Model key and app secrets in a local <code>.env</code> file</td></tr>

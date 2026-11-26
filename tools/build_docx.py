@@ -175,7 +175,7 @@ doc.add_page_break()
 # ================================================================================ 1 summary
 h("1. Executive summary")
 rich("**What it is.** Costa Leona Resort is a fictional beach resort. **Leona** is its virtual front-desk assistant: guests ask in plain English or Filipino about rooms, prices, check-in and check-out, house rules and directions, and Leona answers from six short resort documents. It never books, charges or decides anything about a person. It is a reskin of the open-source chat application LibreChat and runs on Amazon Web Services at " + CFG["live_url"] + ".")
-rich(f"**What was wrong with how it was run.** The starting point was an unmodified chat application on a laptop. It knew nothing about the resort (only {BP} of my 30 test questions were answered correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file, the AWS account was set up with the root login, and nothing recorded who changed what.")
+rich(f"**What was wrong with how it was run.** The starting point was an unmodified chat application on a laptop. It knew nothing about the resort (only {BP} of my 30 test questions were answered correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file, the AWS account was set up with the root login, and I had no audit trail of my own beyond AWS's default 90-day event history.")
 rich("**What I changed.** I gave it its own identity, knowledge and wording; deployed it to AWS behind HTTPS; moved every key into Parameter Store; turned on multi-factor authentication and switched to a normal user that borrows admin rights only through a role; enabled CloudTrail; built a dashboard and eight alarms that e-mail me; automated hourly database backups and hourly test questions; proved a restore works; and deliberately created a disk-full fault that I found, fixed, prevented and wrote a runbook for.")
 rich("**What improved** (measured; see section 9):")
 bullets([f"Answer quality on the same 30 questions: **{BP} ({100*B['passed']/B['total']:.0f}%) to {LP} ({100*L['passed']/L['total']:.0f}%)**.",
@@ -259,7 +259,7 @@ h("4. Baseline: the environment before I touched it")
 rich("Measured on 2026-11-26 before any deployment. An AWS account with one running server that belongs to another course project (untouched, excluded from every automation by tag), and the unmodified LibreChat on my laptop.")
 table(["Area", "Baseline"], [
     ["AWS inventory (ap-southeast-1)", "1 unrelated EC2 instance; no RDS; no S3 buckets; no Elastic IPs"],
-    ["Account set-up", "Root login with MFA; no IAM user for daily work; no budget alert; free-plan credits USD 117.40"],
+    ["Account set-up", "Root login with MFA; no IAM user for daily work; one zero-spend budget left over from another project (I added the SAM10 budget on day one); free-plan credits USD 117.40"],
     ["The AI system", f"Original LibreChat on a laptop, no resort knowledge: {BP} test questions correct; asked 'What time is check-in?' it answers generically"],
     ["Monitoring, backups, automation, audit trail", "None"], ["Secrets", "Model key and app secrets in a local .env file"]], [2.0, 4.5])
 fig("04_signed_in_as_iam_user_credits.png", "", 6.0)
@@ -268,7 +268,7 @@ fig("01_budget_alert_created.png", "E-16", 6.0)
 
 # ================================================================================ 5 WA
 h("5. Well-Architected review")
-rich("Pass 1 was made when the deployment first worked (2026-11-26, about 03:00 UTC); pass 2 after the incident. Verdicts are my own assessment (I did not use the AWS Well-Architected Tool).")
+rich("Pass 1 describes the system as it stood when the deployment first worked (2026-11-26, about 03:00 UTC): running and reachable, but before CloudTrail, the restore tests, log rotation and the runbook. I wrote it up afterwards from the evidence timeline, not in real time, and used it to decide what to build next. Pass 2 was made after the incident. Verdicts are my own assessment (I did not use the AWS Well-Architected Tool).")
 table(["Pillar", "What my system actually does", "Pass 1", "Pass 2"], [
     ["Operational Excellence", "Dashboard, 8 alarms, request log, two scheduled automations, scripts in Git, tested runbook; fault found, fixed, prevented.", "adequate", "good"],
     ["Security", "MFA, temporary admin role, secrets in Parameter Store, CloudTrail, encryption at rest, CloudFront-only access, no SSH, IMDSv2. Gaps: MongoDB without password (private network), HTTP origin hop, GuardDuty unavailable.", "adequate (no CloudTrail yet)", "adequate"],
@@ -337,7 +337,7 @@ table(["Problem found", "Before", "After"], [
     ["Setup done as root", "Budget, MFA and admin role created with the root login", "Daily work as an MFA IAM user; admin only through the assumed role"],
     ["No audit trail", "No trail for this project", "CloudTrail logging since 03:04 UTC"],
     ["Unbounded log growth (found in the incident)", "Request log grew without limit", "logrotate hourly, 100 MB cap, 3 copies"]], [1.8, 2.4, 2.3])
-rich("**Known gaps I did not fix:** MongoDB without a password inside the private network; plain HTTP between CloudFront and the origin (protected by the prefix-list rule); GuardDuty could not be enabled (SubscriptionRequiredException on this account plan).")
+rich("**Known gaps I did not fix:** MongoDB without a password inside the private network; plain HTTP between CloudFront and the origin (protected by the prefix-list rule); GuardDuty could not be enabled (SubscriptionRequiredException on this account plan). At start-up, infra/start.sh renders the LibreChat application secrets from Parameter Store into /opt/leona/.env on the instance (mode 600, never in Git); the Gemini key is never written to disk, because the gateway reads it from Parameter Store itself.")
 
 # ================================================================================ 7 automation + incident
 h("7. Automation and the incident")

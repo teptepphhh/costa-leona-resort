@@ -34,7 +34,7 @@ page("index.html", "Executive summary", f"""
 <div class="sechead"><div><span class="eyebrow">Executive summary</span><h2>The project in plain English</h2></div></div>
 <div class="grid two">
 <div class="panel"><span class="eyebrow">What it is</span><h3>A virtual front desk</h3><p>Costa Leona Resort is a <em>fictional</em> beach resort. <b>Leona</b> answers guests' questions about rooms, prices, check-in and check-out, house rules and directions, in English or Filipino, using six short resort documents. It never books, charges or decides anything about a person.</p></div>
-<div class="panel"><span class="eyebrow">What was wrong</span><h3>How it was run before</h3><p>The starting point was an unmodified chat application on a laptop. It knew nothing about the resort (only <b>{BP}</b> of my 30 test questions answered correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file, the AWS account was set up with the all-powerful root login, and nothing recorded who changed what.</p></div>
+<div class="panel"><span class="eyebrow">What was wrong</span><h3>How it was run before</h3><p>The starting point was an unmodified chat application on a laptop. It knew nothing about the resort (only <b>{BP}</b> of my 30 test questions answered correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file, the AWS account was set up with the all-powerful root login, and I had no audit trail of my own beyond AWS's default 90-day event history.</p></div>
 <div class="panel"><span class="eyebrow">What I changed</span><h3>Reskin, deploy, operate</h3><p>New identity, knowledge and wording; deployed behind HTTPS; every key moved into Parameter Store; MFA and a normal user that borrows admin rights only when needed; CloudTrail; a dashboard and eight e-mail alarms; hourly automated backups and test questions; a proven restore; and a deliberately created disk-full fault that I found, fixed, prevented and wrote a runbook for.</p></div>
 <div class="panel"><span class="eyebrow">What improved</span><h3>Measured results</h3><ul>
 <li>Quality on the same 30 questions: <b>{BP} ({BPC}) &rarr; {LP} ({LPC})</b></li><li>Alarms: <b>0 &rarr; 8</b>, a real alert reached my inbox 3 min 34 s after the fault began</li>
@@ -130,7 +130,7 @@ page("baseline.html", "The baseline", f"""
 <p class="lead2">Measured on 2026-11-26 before any deployment. Two things existed: an AWS account with one running server that belongs to <em>another</em> course project (not mine, untouched, excluded from every automation by tag), and the unmodified LibreChat that I ran on my laptop.</p>
 <table><tr><th>Area</th><th>Baseline</th></tr>
 <tr><td>AWS inventory (ap-southeast-1)</td><td>1 unrelated EC2 instance; no RDS; no S3 buckets; no Elastic IPs</td></tr>
-<tr><td>Account set-up</td><td>Root login with MFA; no IAM user for daily work; no budget alert; free-plan credits USD 117.40</td></tr>
+<tr><td>Account set-up</td><td>Root login with MFA; no IAM user for daily work; one zero-spend budget left over from another project (I added the SAM10 budget on day one); free-plan credits USD 117.40</td></tr>
 <tr><td>The AI system</td><td>Original LibreChat on a laptop, original name and logo, no resort knowledge: <b>{BP}</b> test questions correct; asked "What time is check-in?" it answers generically ("usually 3:00 PM")</td></tr>
 <tr><td>Monitoring and alerts</td><td>None</td></tr><tr><td>Backups</td><td>None</td></tr>
 <tr><td>Secrets</td><td>Model key and app secrets in a local <code>.env</code> file</td></tr>
@@ -148,7 +148,7 @@ def prow(name, ask, does, p1, p2):
             f'<div class="v"><span>Pass 1</span>{pill(k[p1[0]], p1[1])}<span>Pass 2</span>{pill(k[p2[0]], p2[1])}</div></div>')
 
 page("well-architected.html", "Well-Architected review", f"""
-<p class="lead2">I made a first pass when the deployment first worked (2026-11-26, about 03:00 UTC) to decide what to build next, and a second after the incident. Verdicts are my own assessment against the framework's questions; I did not use the AWS Well-Architected Tool.</p>
+<p class="lead2">Pass 1 describes the system as it stood when the deployment first worked (2026-11-26, about 03:00 UTC): running and reachable, but before CloudTrail, the restore tests, log rotation and the runbook. I wrote it up afterwards from the evidence timeline, not in real time, and used it to decide what to build next. Pass 2 was made after the incident. Verdicts are my own assessment against the framework's questions; I did not use the AWS Well-Architected Tool.</p>
 <div class="pillars-head"><span>Pillar</span><span>What my system actually does</span><span>Verdicts</span></div>
 {prow("Operational Excellence","Run and monitor, automate changes, keep improving.","Dashboard, 8 alarms to e-mail, request log with outcome and version, two scheduled automations, everything deployed by scripts in Git, a tested runbook. A fault was found, fixed and prevented.",("adequate","adequate: no runbook, no rotation"),("good","good"))}
 {prow("Security","MFA, least privilege, no secrets in code, audit trail.","MFA on root and the IAM user; admin only through a temporary role; secrets in Parameter Store; CloudTrail; encryption at rest; reachable only via CloudFront; no SSH; IMDSv2. Gaps: MongoDB has no password (private network only), CloudFront-to-origin is HTTP, GuardDuty unavailable.",("adequate","adequate: no CloudTrail yet"),("adequate","adequate"))}
@@ -228,6 +228,7 @@ page("operations.html", "Monitor, back up, secure", f"""
 <tr><td>No audit trail</td><td>No trail for this project</td><td>CloudTrail logging since 03:04 UTC</td></tr>
 <tr><td>Unbounded log growth (found in the incident)</td><td>Request log grew without limit</td><td>logrotate hourly, 100 MB cap, 3 copies</td></tr></table>
 <p><b>Known gaps I did not fix:</b> MongoDB without a password inside the private network; plain HTTP between CloudFront and the origin (protected by the prefix-list rule); GuardDuty could not be enabled (the account plan returned <code>SubscriptionRequiredException</code>).</p>
+<p><b>One more thing to know:</b> at start-up, <code>infra/start.sh</code> renders the LibreChat application secrets from Parameter Store into <code>/opt/leona/.env</code> on the instance (mode 600, never in Git). The Gemini key is never written to disk, because the gateway reads it from Parameter Store itself.</p>
 """, "WS-B, WS-C, WS-D", "Dashboard and alarms, a real alert, backup and restore results, and the security controls each explained in one sentence.")
 
 # =========================================================================================== 7 INCIDENT

@@ -68,6 +68,7 @@
 <tr><td>No audit trail</td><td>No trail for this project</td><td>CloudTrail logging since 03:04 UTC</td></tr>
 <tr><td>Unbounded log growth (found in the incident)</td><td>Request log grew without limit</td><td>logrotate hourly, 100 MB cap, 3 copies</td></tr></table>
 <p><b>Known gaps I did not fix:</b> MongoDB without a password inside the private network; plain HTTP between CloudFront and the origin (protected by the prefix-list rule); GuardDuty could not be enabled (the account plan returned <code>SubscriptionRequiredException</code>).</p>
+<p><b>One more thing to know:</b> at start-up, <code>infra/start.sh</code> renders the LibreChat application secrets from Parameter Store into <code>/opt/leona/.env</code> on the instance (mode 600, never in Git). The Gemini key is never written to disk, because the gateway reads it from Parameter Store itself.</p>
 </main>
 <footer><div class="wrap fcols"><div><b>Costa Leona Resort</b><p>A fictional resort. Leona is an AI assistant for general questions only; please confirm important details with the front desk.</p></div>
 <div><b>Project</b><p><a href="https://github.com/teptepphhh/costa-leona-resort">Git repository</a><br><a href="https://d3s6rxkesmrq3z.cloudfront.net">Live system</a><br><a href="declaration.html">Credits &amp; declaration</a></p></div>
