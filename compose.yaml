@@ -1,5 +1,6 @@
 # Costa Leona Resort - Leona front desk (LibreChat reskin + gateway + MongoDB)
-# One command:  docker compose up -d --build
+# Local:  docker compose up -d --build
+# AWS:    docker compose -f compose.yaml -f compose.aws.yaml up -d --build   (see infra/start.sh)
 name: costa-leona
 
 services:
@@ -9,7 +10,7 @@ services:
     restart: always
     depends_on: [mongodb, gateway]
     ports:
-      - "${PORT:-3080}:${PORT:-3080}"
+      - "${HOST_PORT:-3081}:${PORT:-3081}"
     env_file: .env
     environment:
       - HOST=0.0.0.0
@@ -34,6 +35,7 @@ services:
       - REQUEST_LOG=/var/log/leona/requests.log
     volumes:
       - ./knowledge:/app/knowledge:ro
+      - ./eval:/app/eval:ro
       - ./logs/gateway:/var/log/leona
 
   mongodb:

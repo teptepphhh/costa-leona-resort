@@ -1,0 +1,23 @@
+# AWS overrides: container logs go to CloudWatch Logs (retention set by infra/deploy.sh).
+services:
+  librechat:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-southeast-1
+        awslogs-group: /costaleona/librechat
+        tag: "{{.Name}}"
+  gateway:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-southeast-1
+        awslogs-group: /costaleona/gateway
+        tag: "{{.Name}}"
+  mongodb:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-southeast-1
+        awslogs-group: /costaleona/mongodb
+        tag: "{{.Name}}"
