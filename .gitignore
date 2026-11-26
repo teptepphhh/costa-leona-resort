@@ -1,0 +1,9 @@
+.env
+*.pem
+*.key
+logs/
+node_modules/
+__pycache__/
+*.zip
+.aws/
+credentials*

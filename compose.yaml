@@ -1,0 +1,48 @@
+# Costa Leona Resort - Leona front desk (LibreChat reskin + gateway + MongoDB)
+# One command:  docker compose up -d --build
+name: costa-leona
+
+services:
+  librechat:
+    container_name: costa-leona-web
+    image: registry.librechat.ai/librechat-ai/librechat-dev:latest
+    restart: always
+    depends_on: [mongodb, gateway]
+    ports:
+      - "${PORT:-3080}:${PORT:-3080}"
+    env_file: .env
+    environment:
+      - HOST=0.0.0.0
+      - MONGO_URI=mongodb://mongodb:27017/CostaLeona
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml:ro
+      - ./branding/logo.svg:/app/client/dist/assets/logo.svg:ro
+      - ./branding/favicon-16x16.png:/app/client/dist/assets/favicon-16x16.png:ro
+      - ./branding/favicon-32x32.png:/app/client/dist/assets/favicon-32x32.png:ro
+      - ./branding/apple-touch-icon-180x180.png:/app/client/dist/assets/apple-touch-icon-180x180.png:ro
+      - ./branding/icon-192x192.png:/app/client/dist/assets/icon-192x192.png:ro
+      - ./branding/maskable-icon.png:/app/client/dist/assets/maskable-icon.png:ro
+      - ./branding/index.html:/app/client/dist/index.html:ro
+      - ./branding/manifest.webmanifest:/app/client/dist/manifest.webmanifest:ro
+
+  gateway:
+    container_name: costa-leona-gateway
+    build: ./gateway
+    restart: always
+    env_file: .env
+    environment:
+      - REQUEST_LOG=/var/log/leona/requests.log
+    volumes:
+      - ./knowledge:/app/knowledge:ro
+      - ./logs/gateway:/var/log/leona
+
+  mongodb:
+    container_name: costa-leona-db
+    image: docker.io/library/mongo:8.0.20
+    restart: always
+    command: mongod --noauth
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

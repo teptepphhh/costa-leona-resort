@@ -1,0 +1,69 @@
+﻿version: 1.3.19
+cache: true
+
+# Costa Leona Resort - reskin of LibreChat (MIT, https://github.com/danny-avila/LibreChat)
+interface:
+  customWelcome: 'Welcome to Costa Leona Resort! I am Leona, your virtual front desk. Ask me about rooms, check-in times, amenities, house rules or how to get here.'
+  landingFooter: false
+  endpointsMenu: false
+  modelSelect: false
+  parameters: false
+  presets: false
+  bookmarks: false
+  agents: false
+  prompts: false
+  memories: false
+  fileSearch: false
+  runCode: false
+  webSearch: false
+  mcpServers:
+    use: false
+  theme:
+    version: 1
+    name: costa-leona
+    modes:
+      light:
+        colors:
+          rgb-surface-submit: '14 97 104'
+          rgb-surface-submit-hover: '10 75 80'
+          rgb-accent-primary: '14 97 104'
+          rgb-accent-primary-hover: '10 75 80'
+          rgb-link: '14 97 104'
+          rgb-link-hover: '10 75 80'
+      dark:
+        colors:
+          rgb-surface-submit: '224 166 48'
+          rgb-surface-submit-hover: '196 143 36'
+          rgb-accent-primary: '224 166 48'
+          rgb-accent-primary-hover: '196 143 36'
+          rgb-link: '224 166 48'
+          rgb-link-hover: '196 143 36'
+
+registration:
+  socialLogins: []
+
+endpoints:
+  custom:
+    - name: 'Leona'
+      apiKey: '${LEONA_GATEWAY_TOKEN}'
+      baseURL: 'http://gateway:8080/v1'
+      models:
+        default: ['leona-1']
+        fetch: false
+      titleConvo: false
+      modelDisplayLabel: 'Leona'
+
+modelSpecs:
+  enforce: true
+  prioritize: true
+  list:
+    - name: leona
+      label: 'Leona - Front Desk'
+      description: 'Costa Leona Resort virtual front desk (informational only).'
+      default: true
+      iconURL: '/assets/logo.svg'
+      preset:
+        endpoint: 'Leona'
+        model: 'leona-1'
+        modelLabel: 'Leona'
+
