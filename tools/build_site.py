@@ -30,6 +30,7 @@ MASK = {  # file -> boxes (x0, y0, x1, y1) in original pixels
     "06_model_key_free_tier.png": [(55, 908, 285, 942)],
     "14_deploy_s3_ssm_secrets.png": [(1000, 287, 1275, 309)],
     "15_deploy_complete_cloudfront_url.png": [(436, 354, 732, 375)],
+    "45_alarm_test_emails_inbox.png": [(60, 372, 1860, 407)],
 }
 
 

@@ -186,6 +186,9 @@ page("operations.html", "Monitor, back up, secure", f"""
 <p>This is a real alarm raised by the disk-full fault in <a href="incident.html">the incident</a>: fault at 03:34:44 UTC, alarm at 03:38:18 UTC. I acted on it (fixed at 03:45:29) and the "OK" message followed at 03:47:18.</p>
 <div class="cols">{fig("30_alert_email_disk_high.png","E-08")}{fig("36_alert_email_disk_ok_resolved.png","E-08")}</div>
 {fig("26_sns_subscription_confirmed.png","")}
+<h3>Every alarm tested</h3>
+<p>Only the disk alarm has fired for a real fault. To prove the e-mail path of the other seven I sent a <b>planned notification test</b> (<code>infra/test_alarms.sh</code> sets each alarm to ALARM with <code>set-alarm-state</code>, labelled as a test, not a fault). Each alarm e-mailed me and then returned to its true state with an OK e-mail.</p>
+<div class="cols">{fig("44_alarm_notification_test_sent.png","E-07")}{fig("45_alarm_test_emails_inbox.png","E-08")}</div>
 <h3>Request log</h3>
 <p>Every request is one JSON line: time, request id, the question, duration in milliseconds, success, empty, HTTP status, model and application version (release plus a hash of the knowledge base). Log groups for the gateway, LibreChat, MongoDB, the request log and the automation log all have a 14-day retention. Sample (local run, same code):</p>
 <pre>{{"ts": "2026-11-26T02:26:25+0000", "request_id": "8db0af35c237", "question": "What time is check-in?", "duration_ms": 6837, "success": true, "empty": false, "status": 200, "model": "gemini-3.5-flash-lite", "version": "1.0.0+kb.01604f0c", "error": ""}}</pre>
