@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Executive summary - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html" class=cur>Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><main>
+<h2>Executive summary</h2>
+<p><strong>What it is.</strong> Costa Leona Resort is a <em>fictional</em> beach resort. <strong>Leona</strong> is its virtual front-desk
+assistant: guests ask in plain English or Filipino about rooms, prices, check-in and check-out, house rules or how to get there, and Leona answers
+from six short resort documents. It never books, charges or decides anything about a person - it is informational only. It is a reskin of the open-source
+chat application <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> and runs on Amazon Web Services (AWS) at
+<a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a> (HTTPS).</p>
+<p><strong>What was wrong with how it was run.</strong> The starting point was an unmodified chat application on a laptop. It knew nothing about the resort
+(it answered only <b>9/30</b> of my 30 test questions correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file,
+the AWS account was set up with the all-powerful root login, and there was no record of who changed what.</p>
+<p><strong>What I changed.</strong> I gave it its own identity, knowledge and wording; deployed it to AWS behind HTTPS; moved every key into AWS Parameter
+Store; turned on multi-factor authentication and switched to a normal user that borrows admin rights only when needed; recorded all account activity in
+CloudTrail; built a dashboard and eight alarms that e-mail me; automated hourly database backups and hourly test questions; proved a restore works; and
+deliberately broke the server (a full disk), found the cause, fixed it and wrote a runbook.</p>
+<p><strong>What improved</strong> (measured, details on the <a href="results.html">Results</a> page):</p>
+<ul>
+<li>Answer quality on the same 30 questions: <b>9/30 (30%) &rarr; 30/30 (100%)</b>.</li>
+<li>Alarms: 0 &rarr; 8, all e-mailing me. A real alert reached my inbox <b>3 min 34 s</b> after the fault began; the fault was fixed <b>7 min 11 s</b> later.</li>
+<li>Backups: none &rarr; hourly to S3, with a tested restore that took <b>25 seconds</b>.</li>
+<li>Secrets stored in files in the repository: <b>0</b> (all in Parameter Store).</li>
+</ul>
+<div class="box"><strong>Honest limits.</strong> One small server in one Availability Zone; MongoDB runs without a password inside a private Docker network;
+GuardDuty is not available on this account plan; the quality score uses a simple keyword matcher on questions I wrote myself. These are discussed on the
+<a href="well-architected.html">Well-Architected</a> and <a href="next-steps.html">Next steps</a> pages.</div>
+<h2>Presentation video</h2>
+<div class="pending">[PENDING] Recorded presentation (5-8 minutes) will be embedded here.</div>
+<h2>Where to find things</h2>
+<table><tr><th>Page</th><th>What it contains</th></tr>
+<tr><td><a href="infrastructure.html">AWS design</a></td><td>Diagram, services, how a question travels</td></tr>
+<tr><td><a href="system.html">System + card</a></td><td>Base system, reskin, data, model, three test questions, quality number, system card</td></tr>
+<tr><td><a href="baseline.html">Baseline</a></td><td>The environment before I touched it</td></tr>
+<tr><td><a href="well-architected.html">Well-Architected</a></td><td>Six pillars, verdicts, the gap I would fix first</td></tr>
+<tr><td><a href="operations.html">Monitor, backup, secure</a></td><td>Dashboard, alarms, real alert, restore result, security before/after</td></tr>
+<tr><td><a href="incident.html">Automation + incident</a></td><td>Two scheduled jobs, the disk-full fault, root cause, runbook</td></tr>
+<tr><td><a href="results.html">Results</a></td><td>Before/after numbers, graphs, cost</td></tr>
+<tr><td><a href="next-steps.html">Next steps</a></td><td>Prioritised ideas</td></tr>
+<tr><td><a href="declaration.html">Declaration</a></td><td>Credits, licences, AI-use statement, signed declaration</td></tr></table>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>

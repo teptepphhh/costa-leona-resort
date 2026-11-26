@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Declaration, credits and clean-up - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html">Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html" class=cur>Declaration</a></nav><main>
+<h2>Credits and licences</h2>
+<ul><li><b>LibreChat</b> - Danny Avila and contributors, MIT licence, <a href="https://github.com/danny-avila/LibreChat">github.com/danny-avila/LibreChat</a>. Used as an unmodified container image; the reskin is configuration, branding and the gateway in my repository.</li>
+<li><b>Google Gemini API</b> - free tier under Google's terms of use.</li>
+<li>Logo, knowledge-base documents, scripts and website text: written for this project (see the AI statement below). AWS documentation was used as reference.</li></ul>
+<h2>Use of an AI tool</h2>
+<p>I used Claude (Anthropic) through Claude Code to write the scripts, configuration, gateway code, website text and diagram, and to suggest what to check. I verified everything
+by running it in my own AWS account, reading the real command output, and taking every screenshot myself; no result or screenshot on this site was invented.</p>
+<h2>Clean-up plan</h2>
+<p>After marking: terminate the EC2 instance, delete the CloudFront distribution, the S3 buckets (empty them first), the Parameter Store parameters, the EventBridge rules,
+the CloudWatch alarms, dashboard and log groups, the CloudTrail trail, the SNS topic and the IAM roles, revoke the Google AI Studio key, then confirm nothing is left and tell the instructor.</p>
+<h2>Declaration (Appendix H)</h2>
+<div class="box"><p>We confirm that the work submitted for SAM10 - Systems Administration and Maintenance, Final Project - is our own, except where clearly identified as borrowed,
+based on an existing open project, or as AI-assisted. We confirm that:</p><ul>
+<li>the base system we built on is identified and credited, and we have complied with its licence;</li>
+<li>the system described on our website and in our repository exists and can be demonstrated;</li>
+<li>all data and content used in the system is invented, and contains no real patient, student or staff information;</li>
+<li>our AI system does not make consequential decisions about identifiable people;</li>
+<li>all evidence submitted is authentic and has not been altered to misrepresent results;</li>
+<li>no AWS credentials, API keys or passwords are included in this submission, including in the history of our repository; and</li>
+<li>we have read and accept the academic integrity and ethics requirements of this course.</li></ul>
+<p><b>Student name:</b> Stephanie Joy Revano &nbsp; <b>Student ID:</b> [PENDING]<br><b>Signature:</b> ______________________ &nbsp; <b>Date:</b> [PENDING]</p>
+<p><em>Working alone: one signatory.</em> E-mail addresses visible in a few screenshots were masked before publication.</p></div>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>

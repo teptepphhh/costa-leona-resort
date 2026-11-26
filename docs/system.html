@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your system and the system card - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html">Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html" class=cur>System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><main>
+<h2>Your system</h2>
+<h3>Base system and credit</h3>
+<table><tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Name / version</td><td>LibreChat (container image <code>librechat-dev:latest</code> pulled 2026-11-26; source v0.8.9 reviewed locally)</td></tr>
+<tr><td>Source</td><td><a href="https://github.com/danny-avila/LibreChat">https://github.com/danny-avila/LibreChat</a></td></tr>
+<tr><td>Author</td><td>Danny Avila and the LibreChat contributors</td></tr>
+<tr><td>Licence</td><td>MIT (<a href="https://github.com/danny-avila/LibreChat/blob/main/LICENSE">LICENSE</a>): reuse, modification and rebranding allowed with the copyright notice kept</td></tr>
+<tr><td>What it did originally</td><td>A ChatGPT-style chat interface for many model providers, with user accounts</td></tr></table>
+<h3>The reskin</h3>
+<table><tr><th>Part</th><th>Original</th><th>Mine</th><th>Why</th></tr>
+<tr><td>Name / branding</td><td>"LibreChat", feather logo, green theme</td><td>"Costa Leona Resort", sun-and-waves logo, teal/gold theme, favicon, browser title</td><td>A stranger must not recognise the original</td></tr>
+<tr><td>Data / content</td><td>None - it knows nothing about any business</td><td>Six invented resort documents (about, rooms and rates, policies, amenities and dining, house rules, getting here and FAQ), 7.6 KB, stored in S3</td><td>The data must be my own and contain no real people</td></tr>
+<tr><td>Wording / prompts</td><td>Generic assistant, generic welcome text</td><td>Persona "Leona", hotel front-desk language, welcome text, footer disclaimer, strict "answer only from the knowledge" system prompt in the gateway</td><td>Domain language belongs to the resort world</td></tr>
+<tr><td>Interface</td><td>Model picker, presets, agents, prompts, memories, web search</td><td>One fixed "Leona - Front Desk" assistant; all other features hidden; self-sign-up closed on AWS</td><td>Fewer ways to misuse it; simpler to operate</td></tr>
+<tr><td>AWS services</td><td>None</td><td>S3 (content, backups), Parameter Store (secrets), CloudWatch (metrics, logs), SNS (alerts), EventBridge + SSM (schedules)</td><td>At least one integration beyond hosting</td></tr></table>
+<div class="cols"><figure><a href="img/09_original_login_branding.png"><img src="img/09_original_login_branding.png" alt="Original LibreChat login page on localhost:3080 with its default feather logo, &quot;Welcome back&quot; wording and gree" loading="lazy"></a><figcaption><span class="ev">E-05</span> Original LibreChat login page on localhost:3080 with its default feather logo, &quot;Welcome back&quot; wording and green theme - the &quot;before&quot; for the reskin.</figcaption></figure><figure><a href="img/10_reskin_signup_page.png"><img src="img/10_reskin_signup_page.png" alt="Reskinned system at localhost:3081: Costa Leona sun-and-waves logo, &quot;Costa Leona Resort&quot; tab title and teal th" loading="lazy"></a><figcaption><span class="ev">E-01</span> Reskinned system at localhost:3081: Costa Leona sun-and-waves logo, &quot;Costa Leona Resort&quot; tab title and teal theme replace the original feather logo, &quot;LibreChat&quot; title and green theme (compare with 09).</figcaption></figure></div>
+<div class="cols"><figure><a href="img/08_local_original_generic_answer.png"><img src="img/08_local_original_generic_answer.png" alt="Original (unmodified) LibreChat on localhost, gemini-3.5-flash-lite: after an earlier 503 from the provider, t" loading="lazy"></a><figcaption><span class="ev">E-05</span> Original (unmodified) LibreChat on localhost, gemini-3.5-flash-lite: after an earlier 503 from the provider, the model answers &quot;What time is check-in?&quot; with a generic answer (&quot;usually 3:00 PM... depends on the hotel&quot;) - it has no knowledge of any specific resort. Baseline for the reskin.</figcaption></figure><figure><a href="img/11_reskin_chat_answer.png"><img src="img/11_reskin_chat_answer.png" alt="Reskinned Costa Leona front desk on localhost:3081 - Leona answers &quot;What time is check-in, and can I check out" loading="lazy"></a><figcaption><span class="ev">E-01</span> Reskinned Costa Leona front desk on localhost:3081 - Leona answers &quot;What time is check-in, and can I check out late?&quot; correctly from the resort knowledge base (check-in 2:00 PM; late check-out until 2:00 PM for PHP 1,200, requested the day before). Compare with 08 (generic original answer).</figcaption></figure></div>
+<figure><a href="img/19_live_aws_chat_https.png"><img src="img/19_live_aws_chat_https.png" alt="Reskinned system live on AWS at https://d3s6rxkesmrq3z.cloudfront.net (HTTPS via CloudFront, EC2 origin in ap-" loading="lazy"></a><figcaption><span class="ev">E-01 / E-02</span> Reskinned system live on AWS at https://d3s6rxkesmrq3z.cloudfront.net (HTTPS via CloudFront, EC2 origin in ap-southeast-1): Leona answers &quot;What time is check-in, and how do I get there from Manila?&quot; from the S3-backed knowledge base.</figcaption></figure>
+<p>Live URL: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a>. The model behind it is Google Gemini (<code>gemini-3.5-flash-lite</code>, falling back to <code>gemini-3.5-flash</code>)
+through a <b>free-tier</b> key that belongs to its own Google project and can be revoked without affecting anything else.</p>
+<figure><a href="img/06_model_key_free_tier.png"><img src="img/06_model_key_free_tier.png" alt="Google AI Studio API keys page: dedicated key &quot;sam10-costa-leona&quot; in its own project SAM10-Costa-Leona, Free t" loading="lazy"></a><figcaption>Google AI Studio API keys page: dedicated key &quot;sam10-costa-leona&quot; in its own project SAM10-Costa-Leona, Free tier, created 2026-11-26 (only last 4 characters shown). Needs email blur.</figcaption></figure>
+<h3>Three test questions (two working, one failing)</h3>
+<table><tr><th>#</th><th>Question</th><th>Answer (as returned)</th><th>Verdict</th></tr>
+<tr><td>T1</td><td>What time is check-in, and how do I get there from Manila?</td><td>"Standard check-in time is at 2:00 PM." plus the driving route, the bus route and the Friday/Saturday shuttle (PHP 700)</td><td class="good">Correct, all facts match the documents</td></tr>
+<tr><td>T2</td><td>Are pets allowed?</td><td>"Pets are not allowed at Costa Leona Resort, except for registered service animals."</td><td class="good">Correct</td></tr>
+<tr><td>T3</td><td>We are 2 adults and 2 children aged 7 and 9. Which room should we book and how much per night?</td><td>Recommended the Lioness Family Villa (PHP 9,500) and said it "accommodates up to 4 adults and 1 child", without flagging that two children exceed that limit</td><td class="gap">Fails: unsafe recommendation, should have asked the front desk to confirm</td></tr></table>
+<p>Other honest observations: asked "Where is the pool?", Leona correctly says it has no information on the pool's location (a gap in my documents, not a
+wrong answer); asked about Christmas Day it said the resort is open because the front desk is open 24 hours, which the documents do not actually state
+(an over-inference); and on the first live try the Gemini service answered <b>HTTP 503 "high demand"</b>, a failure outside my control. Raw outputs:
+<a href="evidence/live_test_questions_2026-11-26.md">live_test_questions_2026-11-26.md</a>.</p>
+<div class="cols"><figure><a href="img/27_live_chat_three_questions.png"><img src="img/27_live_chat_three_questions.png" alt="Live system, three real questions (2026-11-26): &quot;How much is the Seaview Room?&quot; answered correctly (PHP 5,800," loading="lazy"></a><figcaption><span class="ev">E-03</span> Live system, three real questions (2026-11-26): &quot;How much is the Seaview Room?&quot; answered correctly (PHP 5,800, breakfast included); &quot;Are pets allowed?&quot; answered correctly (no, except service animals); &quot;Where is the pool?&quot; - Leona honestly says it has no information on the pool location and refers to the front desk, a knowledge-base gap rather than a wrong answer. Browser address bar not captured in this image.</figcaption></figure><figure><a href="img/07_local_original_gemini_503.png"><img src="img/07_local_original_gemini_503.png" alt="Original LibreChat running locally (2026-11-26), question &quot;What time is check-in?&quot; sent to gemini-3.5-flash; t" loading="lazy"></a><figcaption><span class="ev">E-03</span> Original LibreChat running locally (2026-11-26), question &quot;What time is check-in?&quot; sent to gemini-3.5-flash; the third-party model returned HTTP 503 &quot;high demand&quot; - evidence that the Google key authenticates and a real upstream failure mode.</figcaption></figure></div>
+<h3>How good is it? (E-04)</h3>
+<div class="box"><strong>The one number: 30/30 correct (100%)</strong> on 30 labelled questions, against <b>9/30 (30%)</b>
+for the same model with no resort knowledge. Measured with <code>eval/run_eval.py</code>, which asks each question and passes an answer only if it contains the
+required fact(s) listed in <code>eval/questions.csv</code> (for example "1,200" for the late check-out fee). Categories: 18 facts, 3 policies, 3 rules,
+3 unknown-to-the-system, 1 out-of-scope booking request, 2 safety.</div>
+<p><b>Caveats, stated plainly:</b> I wrote the questions, so they match my documents; a keyword match cannot judge tone or subtle mistakes (T3 above would
+pass a keyword test for "9,500"); and 30 questions is a small sample. Results: <a href="evidence/eval_local_full_2026-11-26.json">Leona</a>,
+<a href="evidence/eval_baseline_generic_2026-11-26.json">baseline</a>. A scheduled 5-question subset of the same script runs every hour on AWS
+(<a href="incident.html">automation</a>).</p>
+
+<h2>System card</h2>
+<h3>1. What it does</h3><p>Leona answers guests' questions about Costa Leona Resort (a fictional beach resort): room types and prices, check-in and check-out, amenities,
+house rules and directions. It only reads six documents and replies in English or Filipino.</p>
+<h3>2. Who uses it, and who must not</h3>
+<ul><li><b>Intended users:</b> prospective and current guests asking general questions.</li>
+<li><b>Explicitly NOT for:</b> medical, legal or emergency advice; making, changing or paying for bookings; any decision about an identifiable person (grading, ranking, eligibility, discipline);
+anyone who would share ID, card or health details in the chat.</li></ul>
+<h3>3. Base system</h3><p>LibreChat, https://github.com/danny-avila/LibreChat, Danny Avila and contributors, MIT licence. Originally a multi-provider chat interface.</p>
+<h3>4. What was changed (the reskin)</h3><p>See the reskin table above.</p>
+<h3>5. Data</h3>
+<ul><li><b>Where it came from:</b> written by me for this project; no source, no licence issues. Repository folder <code>knowledge/</code>.</li>
+<li><b>Size and format:</b> six Markdown files, 7,612 bytes in total.</li>
+<li><b>Anything personal in it:</b> No - all invented (names, phone numbers, e-mail addresses and prices are fictional; the e-mail domain is <code>.example</code>).</li>
+<li><b>Anything sent to a third-party AI service:</b> each question plus the six documents, sent to the Google Gemini API. Only invented content is ever sent; the free tier's terms may allow the provider to retain prompts, which is why no real data is used. Personal-data check: [PENDING]</li></ul>
+<h3>6. How good it is</h3>
+<ul><li><b>The one number:</b> 30/30 on my test set.</li><li><b>How measured:</b> keyword scoring script, see above.</li>
+<li><b>Test cases:</b> 30 (facts, policies, rules, questions the documents cannot answer, a booking request, two safety prompts).</li>
+<li><b>An example it gets wrong:</b> T3, the family of two adults and two children recommended into a villa limited to one child.</li></ul>
+<h3>7. How it is served</h3>
+<ul><li><b>Where it runs:</b> EC2 t3.small, ap-southeast-1c, Docker; HTTPS through CloudFront.</li>
+<li><b>What calls it:</b> <code>https://d3s6rxkesmrq3z.cloudfront.net</code> (browser); internally LibreChat calls <code>http://gateway:8080/v1/chat/completions</code> with a bearer token.</li>
+<li><b>Model:</b> Google Gemini <code>gemini-3.5-flash-lite</code> (fallback <code>gemini-3.5-flash</code>), free tier.</li>
+<li><b>If the model or service is unavailable:</b> the gateway retries up to 3 times, then returns an error to the user ("Model provider error, please try again") and counts an <code>AnswersFailed</code> metric; a failure rate above 5% over 15 minutes e-mails me. Seen for real: HTTP 503 from Gemini.</li></ul>
+<h3>8. Limitations and risks</h3>
+<ul><li><b>Cannot do:</b> book, change, or pay; know anything outside the six documents (it should say so); give medical or legal advice; guarantee that its arithmetic or capacity checks are right.</li>
+<li><b>What could go wrong with the data:</b> out-of-date or missing facts give wrong or empty answers (for example the pool location is not documented); model over-inference (Christmas opening).</li>
+<li><b>Misuse:</b> a guest could try to make it reveal its instructions or ignore its rules; the system prompt forbids it and a test question covers it, but it is not a security boundary. Sign-up is closed on AWS to protect the free model quota.</li>
+<li><b>A user must always check:</b> prices, dates, room capacity and policies with the front desk before relying on them.</li></ul>
+<h3>9. Operational summary</h3>
+<ul><li><b>Code:</b> <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a></li><li><b>Backups:</b> MongoDB hourly to S3 (kept 14 days); documents versioned in S3 and in Git.</li>
+<li><b>Healthy means:</b> eight CloudWatch alarms are OK, hourly test questions pass at 80% or more.</li><li><b>Contact:</b> the operator named on the <a href="declaration.html">declaration</a>.</li></ul>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>

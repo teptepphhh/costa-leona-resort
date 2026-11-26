@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Well-Architected review - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html">Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html" class=cur>Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><main>
+<h2>Well-Architected review</h2>
+<p>I made a first pass when the deployment first worked (2026-11-26, ~03:00 UTC) to decide what to build next, and a second pass after the incident
+(WS-F). Verdicts: <span class="good">good</span>, <span class="adeq">adequate</span>, <span class="gap">gap</span>. These are my own assessments against the
+framework's questions (I did not use the AWS Well-Architected Tool).</p>
+<table><tr><th>Pillar</th><th>What the framework asks for</th><th>What my system actually does</th><th>Pass 1</th><th>Pass 2</th></tr>
+<tr><td><b>Operational Excellence</b></td><td>Run and monitor, automate changes, keep improving</td>
+<td>Dashboard, 8 alarms to e-mail, request log with outcome and version, two scheduled automations, everything deployed by scripts in Git, a tested runbook. Fault found, fixed and prevented.</td>
+<td class="adeq">adequate: no runbook, no rotation</td><td class="good">good</td></tr>
+<tr><td><b>Security</b></td><td>MFA, least privilege, no secrets in code, audit trail, data protection</td>
+<td>MFA on root and the IAM user; admin only through a temporary role; secrets in Parameter Store; CloudTrail; encryption at rest; instance reachable only via CloudFront; no SSH; IMDSv2. Gaps: MongoDB has no password (private network only), CloudFront-to-origin hop is HTTP, GuardDuty unavailable.</td>
+<td class="adeq">adequate: no CloudTrail yet</td><td class="adeq">adequate</td></tr>
+<tr><td><b>Reliability</b></td><td>Work when it should, recover when it does not</td>
+<td>Hourly backups, one tested database restore (25 s) and one tested content restore (versioning), alarms on CPU, status, disk, memory, errors. One server in one Availability Zone with no automatic failover.</td>
+<td class="gap">gap: no tested restore</td><td class="adeq">adequate</td></tr>
+<tr><td><b>Performance Efficiency</b></td><td>Right-sized resources, responsive under load, with a number</td>
+<td>t3.small: CPU peaked at 40% and memory at 70% in the observed hour; average answer time 4.5 s (median 3.5 s) over 30 questions, dominated by the external model; alarm at 10 s average.</td>
+<td class="adeq">adequate</td><td class="adeq">adequate</td></tr>
+<tr><td><b>Cost Optimization</b></td><td>Pay for what you use: tags, budget alert, nothing idle</td>
+<td>Zero-spend budget alert created first; every resource tagged <code>Project=SAM10</code>; smallest viable instance; log retention 14 days; S3 lifecycle on backups; free model tier; CloudFront price class 100. The public IPv4 address is billed but needed.</td>
+<td class="good">good</td><td class="good">good</td></tr>
+<tr><td><b>Sustainability</b></td><td>Smaller footprint: no idle instances, no oversizing, no runaway jobs</td>
+<td>One small instance, no load balancer or database service, logs capped by retention and rotation (the runaway log was the incident), jobs limited to hourly. Shut-down plan documented.</td>
+<td class="adeq">adequate</td><td class="adeq">adequate</td></tr></table>
+<div class="box"><strong>The one gap I would fix first: MongoDB authentication.</strong> Today any process on the instance's private Docker network can read or change
+every user and chat without a password. It is not reachable from the internet, so the risk is low, but it is the cheapest high-value fix (a password in Parameter
+Store and a changed connection string) and it protects the most sensitive data the system holds. Single-AZ reliability is the second gap, accepted on purpose.</div>
+<h3>What changed between the two passes</h3>
+<ul><li>Operational Excellence: adequate &rarr; good (runbook, log rotation, tested alert path).</li>
+<li>Reliability: gap &rarr; adequate (two restore tests).</li>
+<li>Security: stayed adequate: CloudTrail was added, but the Mongo and HTTP-origin gaps remain and GuardDuty could not be enabled.</li></ul>
+<figure><a href="img/20_cloudtrail_logging_guardduty_unavailable.png"><img src="img/20_cloudtrail_logging_guardduty_unavailable.png" alt="infra/security.sh in CloudShell: CloudTrail trail costaleona-trail is logging (IsLogging True, started 2026-11" loading="lazy"></a><figcaption><span class="ev">E-17</span> infra/security.sh in CloudShell: CloudTrail trail costaleona-trail is logging (IsLogging True, started 2026-11-26 03:04 UTC) into a private encrypted S3 bucket. GuardDuty could not be enabled: the API returned SubscriptionRequiredException on this account (free plan), so the optional GuardDuty item is documented as not done.</figcaption></figure>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>

@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What I would do next - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html">Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html" class=cur>Next steps</a><a href="declaration.html">Declaration</a></nav><main>
+<h2>What I would do next</h2>
+<ol>
+<li><b>MongoDB authentication</b> (the gap named in the Well-Architected review): store a database password in Parameter Store and require it, plus a secret header so only CloudFront can talk to the origin. About one hour.</li>
+<li><b>Automatic recovery and off-instance copies:</b> daily EBS snapshots with Data Lifecycle Manager and an auto-recovery alarm on the instance; later a second Availability Zone behind a load balancer. This lifts Reliability from adequate to good.</li>
+<li><b>Deploy from Git automatically:</b> a GitHub Actions workflow that runs the tests and then the SSM command that already pulls and restarts the stack, so a change to <code>main</code> updates the running system.</li>
+<li><b>Better quality measurement:</b> grow the labelled set well past 30 questions written by someone else, add checks for capacity and arithmetic (the failing test T3), and add a thumbs-up/down feedback metric from real guests.</li>
+<li><b>Protect the free model quota:</b> rate limiting or AWS WAF in front of CloudFront, and an alarm on request volume, so a loop or a bot cannot burn the quota or, on a paid key, the budget.</li>
+</ol>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>

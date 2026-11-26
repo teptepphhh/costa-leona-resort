@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AWS infrastructure design - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
+<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
+<nav><a href="index.html">Summary</a><a href="infrastructure.html" class=cur>AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><main>
+<h2>AWS infrastructure design</h2>
+<p>One AWS account, one region (<code>ap-southeast-1</code>, Singapore), one small server. Everything carries the tags <code>Project=SAM10</code>.
+The whole build is scripted in <code>infra/</code> in the repository, so it can be rebuilt, not just restored.</p>
+<figure><a href="img/architecture.svg"><img src="img/architecture.svg" alt="AWS infrastructure design diagram"></a>
+<figcaption><span class="ev">E-18</span> Infrastructure design: where every part runs and how a question travels from the guest to the model and back (steps 1-8).</figcaption></figure>
+<h3>What runs where</h3>
+<table><tr><th>Layer</th><th>Service</th><th>What it is for</th></tr>
+<tr><td>Networking / HTTPS</td><td>Amazon CloudFront (default certificate)</td><td>Gives a free HTTPS address (<code>*.cloudfront.net</code>). The only thing allowed to reach the server.</td></tr>
+<tr><td>Networking</td><td>EC2 security group <code>costaleona-web</code></td><td>One rule: TCP 80 from the CloudFront prefix list. No SSH, no 0.0.0.0/0.</td></tr>
+<tr><td>Compute</td><td>EC2 <code>t3.small</code>, Amazon Linux 2023, 20 GB encrypted gp3, IMDSv2</td><td>Runs three Docker containers: LibreChat (the reskinned user interface), the Leona gateway, and MongoDB.</td></tr>
+<tr><td>Database</td><td>MongoDB 8 in a container with a Docker volume</td><td>Users and chat history. Not published to any network port. Backed up hourly to S3.</td></tr>
+<tr><td>Storage</td><td>Amazon S3 (versioned, encrypted, private)</td><td><code>knowledge/</code> holds the six resort documents Leona reads; <code>backups/mongo/</code> holds the hourly dumps (kept 14 days).</td></tr>
+<tr><td>Configuration and secrets</td><td>Systems Manager Parameter Store</td><td>SecureString parameters for the model key, the app secrets and the gateway token, read at runtime.</td></tr>
+<tr><td>Operations</td><td>CloudWatch (dashboard, 8 alarms, 5 log groups), SNS, EventBridge + SSM Run Command, CloudTrail, AWS Budgets</td><td>See the <a href="operations.html">operations</a> and <a href="incident.html">automation</a> pages.</td></tr>
+<tr><td>External</td><td>Google Gemini API (free tier)</td><td>The language model. It runs outside AWS; no AWS AI service is used.</td></tr></table>
+<h3>How a question travels</h3>
+<ol><li>The guest types a question; the browser sends it over HTTPS to CloudFront.</li>
+<li>CloudFront forwards it to the EC2 instance on port 80.</li>
+<li>LibreChat passes the chat to the Leona gateway.</li>
+<li>The gateway reads the model key from Parameter Store and the six documents from S3 (refreshed every 5 minutes) and builds the prompt.</li>
+<li>The gateway calls the Gemini API.</li>
+<li>The answer streams back through LibreChat to the guest.</li>
+<li>The gateway writes one log line (question, duration, success, version) and sends metrics to CloudWatch. If anything goes wrong, an alarm e-mails me through SNS.</li></ol>
+<div class="box"><strong>Pillar trade-off.</strong> I optimised for <b>Security</b> and <b>Operational Excellence</b> (least privilege, no secrets in code, everything
+monitored and scripted). I deliberately accepted <b>Reliability</b> as the weaker pillar: a single server in a single Availability Zone is cheap and simple, and
+the hourly tested backups mean a failure costs minutes, not days. Five other things I chose <em>not</em> to build, to stay small: a load balancer, RDS,
+multi-region, Kubernetes, and fine-tuning.</div>
+<figure><a href="img/15_deploy_complete_cloudfront_url.png"><img src="img/15_deploy_complete_cloudfront_url.png" alt="infra/deploy.sh completed (idempotent re-run): EC2 instance i-09781057c4258b39c in ap-southeast-1, versioned S" loading="lazy"></a><figcaption><span class="ev">E-02</span> infra/deploy.sh completed (idempotent re-run): EC2 instance i-09781057c4258b39c in ap-southeast-1, versioned S3 bucket, SNS alert topic, and a free HTTPS CloudFront URL (https://d3s6rxkesmrq3z.cloudfront.net). IAM role and security-group rule were reused from the first run.</figcaption></figure>
+<figure><a href="img/38_compute_network_evidence_part1.png"><img src="img/38_compute_network_evidence_part1.png" alt="infra/evidence.sh 3: the web instance is t3.small running in ap-southeast-1c with IMDSv2 required; its 20 GB r" loading="lazy"></a><figcaption><span class="ev">E-12</span> infra/evidence.sh 3: the web instance is t3.small running in ap-southeast-1c with IMDSv2 required; its 20 GB root volume is encrypted; the security group has a single rule - TCP 80 only from the CloudFront origin-facing prefix list (no SSH, no 0.0.0.0/0), so the database container is never exposed to the internet.</figcaption></figure>
+</main>
+<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
+Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>
