@@ -30,8 +30,12 @@ fi
 aws cloudtrail start-logging --name costaleona-trail
 aws cloudtrail get-trail-status --name costaleona-trail --query '{IsLogging:IsLogging,StartLoggingTime:StartLoggingTime}' --output table
 
-echo "==> GuardDuty"
-DET=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text)
-if [ "$DET" = "None" ]; then DET=$(aws guardduty create-detector --enable --tags Project=SAM10 --query DetectorId --output text); fi
-aws guardduty get-detector --detector-id "$DET" --query '{Status:Status,Created:CreatedAt}' --output table
+echo "==> GuardDuty (optional; needs a paid account plan)"
+if DET=$(aws guardduty list-detectors --query 'DetectorIds[0]' --output text 2>/tmp/gd.err); then
+  if [ "$DET" = "None" ]; then DET=$(aws guardduty create-detector --enable --tags Project=SAM10 --query DetectorId --output text); fi
+  aws guardduty get-detector --detector-id "$DET" --query '{Status:Status,Created:CreatedAt}' --output table
+else
+  echo "GuardDuty not available on this account: $(tr -d '
+' < /tmp/gd.err | cut -c1-160)"
+fi
 echo "done"
