@@ -1,17 +1,20 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>What I would do next - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
-<link rel="icon" href="img/favicon-32x32.png"></head><body>
-<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
-<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
-<nav><a href="index.html">Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html" class=cur>Next steps</a><a href="declaration.html">Declaration</a></nav><main>
-<h2>What I would do next</h2>
-<ol>
-<li><b>MongoDB authentication</b> (the gap named in the Well-Architected review): store a database password in Parameter Store and require it, plus a secret header so only CloudFront can talk to the origin. About one hour.</li>
-<li><b>Automatic recovery and off-instance copies:</b> daily EBS snapshots with Data Lifecycle Manager and an auto-recovery alarm on the instance; later a second Availability Zone behind a load balancer. This lifts Reliability from adequate to good.</li>
-<li><b>Deploy from Git automatically:</b> a GitHub Actions workflow that runs the tests and then the SSM command that already pulls and restarts the stack, so a change to <code>main</code> updates the running system.</li>
-<li><b>Better quality measurement:</b> grow the labelled set well past 30 questions written by someone else, add checks for capacity and arithmetic (the failing test T3), and add a thumbs-up/down feedback metric from real guests.</li>
-<li><b>Protect the free model quota:</b> rate limiting or AWS WAF in front of CloudFront, and an alarm on request volume, so a loop or a bot cannot burn the quota or, on a paid key, the budget.</li>
-</ol>
+<title>What I would do next | Costa Leona Resort - SAM10</title><meta name="description" content="Costa Leona Resort front-desk assistant: a reskinned LibreChat deployed, monitored, backed up and secured on AWS (SAM10 final project).">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header class="top"><div class="wrap bar"><a class="brand" href="index.html"><img src="img/logo-512.png" alt=""><span><b>Costa Leona</b><small>Resort &middot; SAM10</small></span></a>
+<input type="checkbox" id="mt" class="mt"><label for="mt" class="burger" aria-label="Menu"><i></i><i></i><i></i></label>
+<nav><a href="index.html">Overview</a><a href="infrastructure.html">AWS design</a><a href="system.html">System</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Review</a><a href="operations.html">Operate</a><a href="incident.html">Incident</a><a href="results.html">Results</a><a href="next-steps.html" class=cur>Next steps</a><a href="declaration.html">Declaration</a></nav><a class="btn small" href="https://d3s6rxkesmrq3z.cloudfront.net">Try Leona <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></header>
+<section class="phero"><div class="wrap"><span class="eyebrow">WS-G - Next steps</span><h1>What I would do next</h1><p>Five realistic ideas, in priority order.</p></div><svg class="wavebot" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 30c240 40 480 40 720 0s480-40 720 0v30H0z"/></svg></section><main class="wrap">
+<div class="grid two">
+<div class="panel"><span class="eyebrow">1 - Security</span><h3>MongoDB authentication</h3><p>The gap named in the review: store a database password in Parameter Store and require it, plus a secret header so only CloudFront can talk to the origin. About one hour.</p></div>
+<div class="panel"><span class="eyebrow">2 - Reliability</span><h3>Automatic recovery and off-instance copies</h3><p>Daily EBS snapshots with Data Lifecycle Manager and an auto-recovery alarm on the instance; later a second Availability Zone behind a load balancer. This lifts Reliability from adequate to good.</p></div>
+<div class="panel"><span class="eyebrow">3 - Operations</span><h3>Deploy from Git automatically</h3><p>A GitHub Actions workflow that runs the tests and then the SSM command that already pulls and restarts the stack, so a change to <code>main</code> updates the running system.</p></div>
+<div class="panel"><span class="eyebrow">4 - Quality</span><h3>Better measurement</h3><p>Grow the labelled set well past 30 questions written by someone else, add checks for capacity and arithmetic (the failing test T3), and add a thumbs-up/down feedback metric from real guests.</p></div>
+<div class="panel"><span class="eyebrow">5 - Cost</span><h3>Protect the model quota</h3><p>Rate limiting or AWS WAF in front of CloudFront and an alarm on request volume, so a loop or a bot cannot burn the free quota or, on a paid key, the budget.</p></div></div>
 </main>
-<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
-Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>
+<footer><div class="wrap fcols"><div><b>Costa Leona Resort</b><p>A fictional resort. Leona is an AI assistant for general questions only; please confirm important details with the front desk.</p></div>
+<div><b>Project</b><p><a href="https://github.com/teptepphhh/costa-leona-resort">Git repository</a><br><a href="https://d3s6rxkesmrq3z.cloudfront.net">Live system</a><br><a href="declaration.html">Credits &amp; declaration</a></p></div>
+<div><b>Built on</b><p><a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT) &middot; AWS &middot; Google Gemini free tier</p></div></div>
+<div class="wrap copy">SAM10 - Systems Administration and Maintenance, Final Project. All data and people are invented.</div></footer></body></html>

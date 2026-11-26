@@ -1,45 +1,55 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Executive summary - Costa Leona Resort | SAM10</title><link rel="stylesheet" href="style.css">
-<link rel="icon" href="img/favicon-32x32.png"></head><body>
-<header><img src="img/logo-512.png" alt="Costa Leona logo" class="logo"><div><h1>Costa Leona Resort - Leona front desk</h1>
-<p>SAM10 Final Project: build, deploy and run an AI system on AWS</p></div></header>
-<nav><a href="index.html" class=cur>Summary</a><a href="infrastructure.html">AWS design</a><a href="system.html">System + card</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Well-Architected</a><a href="operations.html">Monitor, backup, secure</a><a href="incident.html">Automation + incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><main>
-<h2>Executive summary</h2>
-<p><strong>What it is.</strong> Costa Leona Resort is a <em>fictional</em> beach resort. <strong>Leona</strong> is its virtual front-desk
-assistant: guests ask in plain English or Filipino about rooms, prices, check-in and check-out, house rules or how to get there, and Leona answers
-from six short resort documents. It never books, charges or decides anything about a person - it is informational only. It is a reskin of the open-source
-chat application <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> and runs on Amazon Web Services (AWS) at
-<a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a> (HTTPS).</p>
-<p><strong>What was wrong with how it was run.</strong> The starting point was an unmodified chat application on a laptop. It knew nothing about the resort
-(it answered only <b>9/30</b> of my 30 test questions correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file,
-the AWS account was set up with the all-powerful root login, and there was no record of who changed what.</p>
-<p><strong>What I changed.</strong> I gave it its own identity, knowledge and wording; deployed it to AWS behind HTTPS; moved every key into AWS Parameter
-Store; turned on multi-factor authentication and switched to a normal user that borrows admin rights only when needed; recorded all account activity in
-CloudTrail; built a dashboard and eight alarms that e-mail me; automated hourly database backups and hourly test questions; proved a restore works; and
-deliberately broke the server (a full disk), found the cause, fixed it and wrote a runbook.</p>
-<p><strong>What improved</strong> (measured, details on the <a href="results.html">Results</a> page):</p>
-<ul>
-<li>Answer quality on the same 30 questions: <b>9/30 (30%) &rarr; 30/30 (100%)</b>.</li>
-<li>Alarms: 0 &rarr; 8, all e-mailing me. A real alert reached my inbox <b>3 min 34 s</b> after the fault began; the fault was fixed <b>7 min 11 s</b> later.</li>
-<li>Backups: none &rarr; hourly to S3, with a tested restore that took <b>25 seconds</b>.</li>
-<li>Secrets stored in files in the repository: <b>0</b> (all in Parameter Store).</li>
-</ul>
-<div class="box"><strong>Honest limits.</strong> One small server in one Availability Zone; MongoDB runs without a password inside a private Docker network;
-GuardDuty is not available on this account plan; the quality score uses a simple keyword matcher on questions I wrote myself. These are discussed on the
-<a href="well-architected.html">Well-Architected</a> and <a href="next-steps.html">Next steps</a> pages.</div>
-<h2>Presentation video</h2>
+<title>Executive summary | Costa Leona Resort - SAM10</title><meta name="description" content="Costa Leona Resort front-desk assistant: a reskinned LibreChat deployed, monitored, backed up and secured on AWS (SAM10 final project).">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="img/favicon-32x32.png"></head><body>
+<header class="top"><div class="wrap bar"><a class="brand" href="index.html"><img src="img/logo-512.png" alt=""><span><b>Costa Leona</b><small>Resort &middot; SAM10</small></span></a>
+<input type="checkbox" id="mt" class="mt"><label for="mt" class="burger" aria-label="Menu"><i></i><i></i><i></i></label>
+<nav><a href="index.html" class=cur>Overview</a><a href="infrastructure.html">AWS design</a><a href="system.html">System</a><a href="baseline.html">Baseline</a><a href="well-architected.html">Review</a><a href="operations.html">Operate</a><a href="incident.html">Incident</a><a href="results.html">Results</a><a href="next-steps.html">Next steps</a><a href="declaration.html">Declaration</a></nav><a class="btn small" href="https://d3s6rxkesmrq3z.cloudfront.net">Try Leona <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></header>
+<main class="wrap">
+<section class="hero"><div>
+<span class="eyebrow">SAM10 final project &middot; build, deploy and run an AI system</span>
+<h1>Meet Leona, the <em>front desk</em> of Costa Leona Resort.</h1>
+<p class="lead">An open-source AI chat reskinned into a resort assistant, deployed on AWS and run like a real service: monitored, backed up, secured and documented. Everything on this site is backed by evidence from the running system.</p>
+<div class="cta"><a class="btn" href="https://d3s6rxkesmrq3z.cloudfront.net">Try Leona live <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="#video">Watch the presentation <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div>
+<div class="mock"><div class="frame"><div class="bar2"><i></i><i></i><i></i><span>d3s6rxkesmrq3z.cloudfront.net</span></div>
+<img src="img/hero_chat.png" alt="Leona answering a guest question on the live AWS deployment"></div>
+<div class="chip c1"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8.2-8 9-4.8-.8-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5L15.5 10"/></svg></span><div><b>HTTPS via CloudFront</b>Only CloudFront can reach the server</div></div>
+<div class="chip c2"><span class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></span><div><b>Answers from S3</b>Six invented resort documents</div></div></div></section>
+
+<div class="strip"><div class="stat"><b>30/30</b><span>test questions answered correctly</span><small>generic model: 9/30</small></div><div class="stat"><b>8</b><span>alarms e-mail the operator</span><small>dashboard + log groups</small></div>
+<div class="stat"><b>3m 34s</b><span>to detect a real fault</span><small>fixed 7 min 11 s later</small></div><div class="stat"><b>25 s</b><span>tested database restore</span><small>hourly backups to S3</small></div></div>
+
+<div class="feats">
+<div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8.2-8 9-4.8-.8-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5L15.5 10"/></svg></span><div><b>Secure by design</b><span>MFA, role-based admin, secrets in Parameter Store, CloudTrail, no SSH.</span></div></div>
+<div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg></span><div><b>Monitored</b><span>Dashboard, eight alarms and a request log with outcome and timing.</span></div></div>
+<div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></span><div><b>Backed up and restored</b><span>Hourly dumps, versioned content, two restores tested.</span></div></div>
+<div class="feat"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg></span><div><b>Automated</b><span>Scheduled backups and test questions, all code in Git.</span></div></div></div>
+
+<div class="sechead"><div><span class="eyebrow">Executive summary</span><h2>The project in plain English</h2></div></div>
+<div class="grid two">
+<div class="panel"><span class="eyebrow">What it is</span><h3>A virtual front desk</h3><p>Costa Leona Resort is a <em>fictional</em> beach resort. <b>Leona</b> answers guests' questions about rooms, prices, check-in and check-out, house rules and directions, in English or Filipino, using six short resort documents. It never books, charges or decides anything about a person.</p></div>
+<div class="panel"><span class="eyebrow">What was wrong</span><h3>How it was run before</h3><p>The starting point was an unmodified chat application on a laptop. It knew nothing about the resort (only <b>9/30</b> of my 30 test questions answered correctly), nobody would be told if it broke, nothing was backed up, its keys lived in a local file, the AWS account was set up with the all-powerful root login, and nothing recorded who changed what.</p></div>
+<div class="panel"><span class="eyebrow">What I changed</span><h3>Reskin, deploy, operate</h3><p>New identity, knowledge and wording; deployed behind HTTPS; every key moved into Parameter Store; MFA and a normal user that borrows admin rights only when needed; CloudTrail; a dashboard and eight e-mail alarms; hourly automated backups and test questions; a proven restore; and a deliberately created disk-full fault that I found, fixed, prevented and wrote a runbook for.</p></div>
+<div class="panel"><span class="eyebrow">What improved</span><h3>Measured results</h3><ul>
+<li>Quality on the same 30 questions: <b>9/30 (30%) &rarr; 30/30 (100%)</b></li><li>Alarms: <b>0 &rarr; 8</b>, a real alert reached my inbox 3 min 34 s after the fault began</li>
+<li>Backups: none &rarr; hourly, restore in <b>25 s</b></li><li>Secrets in the repository: <b>0</b></li></ul></div></div>
+<div class="box"><b>Honest limits.</b> One small server in one Availability Zone; MongoDB has no password inside its private Docker network; GuardDuty is unavailable on this account plan; the quality score is a keyword match on questions I wrote myself. See <a href="well-architected.html">the review</a> and <a href="next-steps.html">next steps</a>.</div>
+
+<div class="sechead" id="video"><div><span class="eyebrow">Presentation</span><h2>Watch the walkthrough</h2></div><p>The reskin, the system running in AWS, the dashboard and alarms, the restore and the fault.</p></div>
 <div class="pending">[PENDING] Recorded presentation (5-8 minutes) will be embedded here.</div>
-<h2>Where to find things</h2>
-<table><tr><th>Page</th><th>What it contains</th></tr>
-<tr><td><a href="infrastructure.html">AWS design</a></td><td>Diagram, services, how a question travels</td></tr>
-<tr><td><a href="system.html">System + card</a></td><td>Base system, reskin, data, model, three test questions, quality number, system card</td></tr>
-<tr><td><a href="baseline.html">Baseline</a></td><td>The environment before I touched it</td></tr>
-<tr><td><a href="well-architected.html">Well-Architected</a></td><td>Six pillars, verdicts, the gap I would fix first</td></tr>
-<tr><td><a href="operations.html">Monitor, backup, secure</a></td><td>Dashboard, alarms, real alert, restore result, security before/after</td></tr>
-<tr><td><a href="incident.html">Automation + incident</a></td><td>Two scheduled jobs, the disk-full fault, root cause, runbook</td></tr>
-<tr><td><a href="results.html">Results</a></td><td>Before/after numbers, graphs, cost</td></tr>
-<tr><td><a href="next-steps.html">Next steps</a></td><td>Prioritised ideas</td></tr>
-<tr><td><a href="declaration.html">Declaration</a></td><td>Credits, licences, AI-use statement, signed declaration</td></tr></table>
+
+<div class="sechead"><div><span class="eyebrow">Explore</span><h2>Everything, with the evidence beside each claim</h2></div></div>
+<div class="grid three">
+<a class="card" href="infrastructure.html"><div class="thumb"><img src="img/architecture.svg" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">Design</span><h3>AWS infrastructure design</h3><p>The diagram of every service and how a question travels to the model and back.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<a class="card" href="system.html"><div class="thumb"><img src="img/11_reskin_chat_answer.png" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">System</span><h3>The system and its card</h3><p>Base system, reskin, data, model, three test questions and the honest quality number.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<a class="card" href="operations.html"><div class="thumb"><img src="img/28_cloudwatch_dashboard_before_incident.png" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">Operate</span><h3>Monitor, back up, secure</h3><p>Dashboard, alarms, the real alert, restore results and the security controls.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<a class="card" href="incident.html"><div class="thumb"><img src="img/30_alert_email_disk_high.png" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">Incident</span><h3>Automation and the incident</h3><p>Two scheduled jobs, the disk-full fault, root cause, fix and runbook.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<a class="card" href="results.html"><div class="thumb"><img src="img/chart_quality.png" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">Results</span><h3>Before and after</h3><p>The same measurements on both sides, with graphs and cost.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<a class="card" href="baseline.html"><div class="thumb"><img src="img/05_baseline_inventory_cloudshell.png" alt="" loading="lazy"></div><div class="cbody"><span class="eyebrow">Baseline</span><h3>The baseline</h3><p>The environment before I touched it, measured.</p><span class="more">Open <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a></div>
+<div class="linkrow"><a href="well-architected.html">Well-Architected review</a><a href="next-steps.html">What I would do next</a><a href="declaration.html">Credits &amp; declaration</a><a href="https://github.com/teptepphhh/costa-leona-resort">Git repository</a></div>
 </main>
-<footer>Fictional resort; all data invented. Base system: <a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT).
-Repository: <a href="https://github.com/teptepphhh/costa-leona-resort">https://github.com/teptepphhh/costa-leona-resort</a> - Live system: <a href="https://d3s6rxkesmrq3z.cloudfront.net">https://d3s6rxkesmrq3z.cloudfront.net</a></footer></body></html>
+<footer><div class="wrap fcols"><div><b>Costa Leona Resort</b><p>A fictional resort. Leona is an AI assistant for general questions only; please confirm important details with the front desk.</p></div>
+<div><b>Project</b><p><a href="https://github.com/teptepphhh/costa-leona-resort">Git repository</a><br><a href="https://d3s6rxkesmrq3z.cloudfront.net">Live system</a><br><a href="declaration.html">Credits &amp; declaration</a></p></div>
+<div><b>Built on</b><p><a href="https://github.com/danny-avila/LibreChat">LibreChat</a> (MIT) &middot; AWS &middot; Google Gemini free tier</p></div></div>
+<div class="wrap copy">SAM10 - Systems Administration and Maintenance, Final Project. All data and people are invented.</div></footer></body></html>
