@@ -101,7 +101,7 @@ echo "instance $IID  origin $DNS"
 
 say "8/9 CloudFront (free HTTPS URL on *.cloudfront.net)"
 CF=$(aws cloudfront list-distributions --query "DistributionList.Items[?Comment=='costaleona'].[Id,DomainName]" --output text 2>/dev/null || true)
-if [ -z "$CF" ]; then
+if [ -z "$CF" ] || [ "$CF" = "None" ]; then
   cat > /tmp/cf.json <<EOF
 {"CallerReference":"costaleona-$(date +%s)","Comment":"costaleona","Enabled":true,"PriceClass":"PriceClass_100",
  "Origins":{"Quantity":1,"Items":[{"Id":"ec2-origin","DomainName":"$DNS",

@@ -12,10 +12,10 @@ get() { aws ssm get-parameter --name "$P/$1" --with-decryption --query Parameter
 DOMAIN=""
 for i in $(seq 1 90); do
   DOMAIN=$(get domain 2>/dev/null || true)
-  [ -n "$DOMAIN" ] && break
+  [[ "$DOMAIN" =~ ^https://[a-z0-9-]+\.[a-z0-9.-]+$ ]] && break
   echo "waiting for $P/domain ($i)"; sleep 20
 done
-[ -n "$DOMAIN" ] || { echo "no domain parameter"; exit 1; }
+[[ "$DOMAIN" =~ ^https://[a-z0-9-]+\.[a-z0-9.-]+$ ]] || { echo "no valid domain parameter"; exit 1; }
 
 umask 077
 cat > .env <<EOF
