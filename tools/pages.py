@@ -357,6 +357,6 @@ page("declaration.html", "Credits, AI use and declaration", f"""
 <li>all evidence submitted is authentic and has not been altered to misrepresent results;</li>
 <li>no AWS credentials, API keys or passwords are included in this submission, including in the history of our repository; and</li>
 <li>we have read and accept the academic integrity and ethics requirements of this course.</li></ul>
-<p><b>Student name:</b> {CFG['student_name']} &nbsp; <b>Student ID:</b> {sid}<br><b>Signature:</b> ______________________ &nbsp; <b>Date:</b> {ddate}</p>
+<p><b>Student name:</b> {CFG['student_name']} &nbsp; <b>Student ID:</b> {sid}<br><b>Signature:</b> <i>{CFG['student_name']}</i> (typed, electronic signature) &nbsp; <b>Date:</b> {ddate}</p>
 <p><em>Working alone: one signatory.</em> E-mail addresses visible in a few screenshots were masked before publication.</p></div>
 """, "Appendix H", "Credits, licences, the AI-use statement, the clean-up plan and the signed declaration.")

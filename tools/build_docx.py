@@ -479,7 +479,7 @@ bullets(["the base system we built on is identified and credited, and we have co
          "we have read and accept the academic integrity and ethics requirements of this course."])
 para("")
 rich(f"**Student name:** {CFG['student_name']}        **Student ID:** {CFG['student_id']}")
-rich("**Signature:** ______________________        **Date:** " + (CFG["declaration_date"] or "[[date]]"))
+rich("**Signature:** " + CFG["student_name"] + " (typed, electronic signature)        **Date:** " + (CFG["declaration_date"] or "[[date]]"))
 
 # footer
 for s in doc.sections:
