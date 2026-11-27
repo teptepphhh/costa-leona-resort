@@ -165,9 +165,9 @@ para("Build, deploy and run an AI system on AWS", size=13, italic=True, space=40
 table(["Item", "Detail"], [
     ["Student", f"{CFG['student_name']} (working alone)"], ["Student ID", CFG["student_id"]],
     ["Base system", "LibreChat (MIT), https://github.com/danny-avila/LibreChat"],
-    ["Live system (HTTPS)", CFG["live_url"]], ["Project website", CFG["site_url"]],
+    ["Live system (HTTPS)", CFG["live_url"]], ["Project website", CFG["site_url"]], ["Presentation video", CFG.get("video_watch_url", "")],
     ["Git repository", CFG["repo_url"]], ["AWS region", "ap-southeast-1 (Singapore)"],
-    ["Report date", "26 November 2026"]], [1.8, 4.7])
+    ["Report date", "27 November 2026"]], [1.8, 4.7])
 para("This document collects the project website content and every piece of evidence (screenshots and command output) in one place. "
      "All data in the system is invented; no result or screenshot is fabricated. E-mail addresses were masked.", italic=True, size=9.5)
 doc.add_page_break()
@@ -183,7 +183,7 @@ bullets([f"Answer quality on the same 30 questions: **{BP} ({100*B['passed']/B['
          "Backups: none to hourly to S3, with a tested restore that took **25 seconds**.",
          "Secret values stored in the repository or its history: **0**."])
 rich("**Honest limits.** One small server in one Availability Zone; MongoDB runs without a password inside a private Docker network; GuardDuty is not available on this account plan; the quality score is a keyword match on questions I wrote myself.")
-rich("Presentation video: " + (CFG["video_embed_url"] or "[[video link to be added]]"))
+rich("Presentation video: " + (CFG.get("video_watch_url") or "[[video link to be added]]"))
 
 # ================================================================================ 2 design
 h("2. AWS infrastructure design")

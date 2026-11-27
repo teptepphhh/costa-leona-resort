@@ -4,7 +4,7 @@
   "site_url": "https://teptepphhh.github.io/costa-leona-resort/",
   "student_name": "Stephanie Joy Revano",
   "student_id": "23-1556-963",
-  "video_embed_url": "",
+  "video_embed_url": "https://www.youtube.com/embed/_BdlKibI3bs",
   "backup_runs": [
     "Run 1: 2026-11-26 02:58:04 UTC - CostaLeona-20261126T025804Z.archive.gz, 13,249 bytes",
     "Run 2: 2026-11-26 03:58:04 UTC - CostaLeona-20261126T035804Z.archive.gz, 16,042 bytes"
@@ -18,5 +18,6 @@
   "request_log_img": "42_cloudwatch_request_log.png",
   "cost_before": "USD 117.40 free-plan credits remaining (2026-11-26, console home, before deployment)",
   "cost_after": "USD 117.24 credits remaining (later on 2026-11-26, after deployment, incident and restore tests); about USD 0.16 used so far. The console refreshes estimates about every 24 hours, so the final figure may be higher.",
-  "declaration_date": ""
+  "declaration_date": "27 November 2026",
+  "video_watch_url": "https://youtu.be/_BdlKibI3bs"
 }
